@@ -1,15 +1,16 @@
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
+import LoginPage from "./pages/LoginPage.jsx";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <div>This is the landing page?</div>,
+      element: <div>Default Page temporary</div>,
     },
     {
       path: "/login",
-      element: <div>This is the login page</div>,
+      element: <LoginPage />,
     },
   ]);
 
