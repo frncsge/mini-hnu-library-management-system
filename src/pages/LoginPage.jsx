@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -6,6 +7,9 @@ function LoginPage() {
     email: "",
     password: "",
   });
+  const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   function handleInput(event) {
     const newInput = event.target.value;
@@ -24,9 +28,40 @@ function LoginPage() {
     }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    console.log(`${input.email} and ${input.password}`);
+    setLoading(true);
+
+    try {
+      const email = input.email.trim();
+      const password = input.password.trim();
+
+      const response = await fetch(API_URL + "/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoading(false);
+        return navigate("/verify-otp", {
+          state: { email: email },
+        });
+      }
+
+      setLoading(false);
+      return alert(data.message);
+    } catch (error) {
+      console.error("Error logging in", error);
+      alert("Unable to connect to the server");
+    }
   }
 
   return (
@@ -61,8 +96,12 @@ function LoginPage() {
           />
           <label htmlFor="show-password-toggle">Show password</label>
         </div>
-        <button className="p-3 mt-3 bg-green-500 text-white rounded-md" tabIndex={0}>
-          Login
+        <button
+          className={`p-3 mt-3 ${loading ? "bg-green-300" : "bg-green-500"} text-white rounded-md`}
+          tabIndex={0}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Login"}
         </button>
       </form>
     </main>
