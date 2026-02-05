@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import LoginPage from "./pages/LoginPage.jsx";
+import VerifyOTP from "./pages/VerifyOTP.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -11,6 +12,10 @@ function App() {
     {
       path: "/login",
       element: <LoginPage />,
+    },
+    {
+      path: "verify-otp",
+      element: <VerifyOTP />,
     },
   ]);
 
