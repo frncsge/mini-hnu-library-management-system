@@ -17,8 +17,15 @@ const login = async (req, res) => {
   const email = req.body.email.trim();
   const password = req.body.password.trim();
   const otpDigit = 6;
+  const emailPattern = /^[^\s@]+@hnu\.edu\.ph$/; //only login email from holy name university
 
   try {
+    //check if email fits the email pattern
+    if (!emailPattern.test(email))
+      return res
+        .status(400)
+        .json({ message: "Email must end with @hnu.edu.ph" });
+
     const user = await getUserByEmail(email);
 
     if (!user)
