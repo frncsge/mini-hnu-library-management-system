@@ -2,6 +2,9 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import LoginPage from "./pages/LoginPage.jsx";
 import VerifyOTP from "./pages/VerifyOTP.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import LibrarianDashboard from "./pages/LibrarianDashboard.jsx";
+import StudentHomePage from "./pages/StudentHomePage.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -14,8 +17,20 @@ function App() {
       element: <LoginPage />,
     },
     {
-      path: "verify-otp",
+      path: "/login/verify-otp",
       element: <VerifyOTP />,
+    },
+    {
+      path: "/admin/dashboard",
+      element: <AdminDashboard />,
+    },
+    {
+      path: "/librarian/dashboard",
+      element: <LibrarianDashboard />,
+    },
+    {
+      path: "/student/homepage",
+      element: <StudentHomePage />,
     },
   ]);
 
