@@ -19,9 +19,9 @@ import {
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
-  if (!email) return res.status(401).json({ message: "Email is required" });
-
   if (!otp) return res.status(401).json({ message: "OTP is required" });
+
+  if (!email) return res.status(401).json({ message: "Email is required" });
 
   try {
     //check if pending login exists

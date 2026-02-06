@@ -46,7 +46,7 @@ const login = async (req, res) => {
     const otpDigit = 6;
     const otp = generateSecureOTP(otpDigit);
     try {
-      // await sendOTPbyEmail(email, otp);
+      await sendOTPbyEmail(email, otp);
 
       //cache otp in redis
       const value = { sub: user.user_id, role: user.user_role, otp };
@@ -63,7 +63,7 @@ const login = async (req, res) => {
         .json({ message: "Failed to send OTP. Please try logging in again" });
     }
 
-    res.status(200).json({ message: `OTP sent ${otp}` });
+    res.status(200).json({ message: `OTP sent` });
   } catch (error) {
     console.error("Error logging in", error);
     res.status(500).json({ message: "Server error" });
