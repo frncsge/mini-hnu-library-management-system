@@ -3,7 +3,12 @@ import redisClient from "../config/redis.config.js";
 import { getUserByEmail } from "../models/user.model.js";
 import generateSecureOTP from "../helpers/generateSecureOTP.helper.js";
 import sendOTPbyEmail from "../helpers/mailer.helper.js";
-import { cacheOtp, cacheOtpResendCooldown } from "../utils/authCache.util.js";
+import {
+  cacheOtp,
+  cacheOtpResendCooldown,
+  trackOtpAttempts,
+  resetOtpAttempts,
+} from "../utils/authCache.util.js";
 
 const login = async (req, res) => {
   if (!req.body.email || !req.body.password)
@@ -25,6 +30,18 @@ const login = async (req, res) => {
     if (!match)
       return res.status(401).json({ message: "Incorrect email or password" });
 
+    //check if otp attempts reached maximum
+    const { blocked, attempts, timeLeft } = await trackOtpAttempts(
+      email,
+      false, //set increment attempt to false
+    );
+
+    if (blocked) {
+      return res.status(429).json({
+        message: `You have reached the maximum ${attempts} OTP verification attempts. Please try again in ${timeLeft} seconds`,
+      });
+    }
+
     // if password match, check if an OTP is already sent
     const existingOTP = await redisClient.get(`otp:${email}`);
     if (existingOTP) {
@@ -39,10 +56,12 @@ const login = async (req, res) => {
     //send otp via email
     const otp = generateSecureOTP(otpDigit);
     try {
-      await sendOTPbyEmail(email, otp);
+      // await sendOTPbyEmail(email, otp);
+
       const value = { sub: user.user_id, role: user.user_role, otp };
       await cacheOtp(email, value);
       await cacheOtpResendCooldown(email);
+      await resetOtpAttempts(email); //reset otp attempts for every new otp sent
     } catch (error) {
       console.error("Error sending OTP via email", error);
       return res
@@ -50,7 +69,7 @@ const login = async (req, res) => {
         .json({ message: "Failed to send OTP. Please try logging in again" });
     }
 
-    res.status(200).json({ message: "OTP sent" });
+    res.status(200).json({ message: `OTP sent ${otp}` });
   } catch (error) {
     console.error("Error logging in", error);
     res.status(500).json({ message: "Server error" });
