@@ -45,6 +45,7 @@ function LoginPage() {
           email,
           password,
         }),
+        credentials: "include",
       });
 
       const data = await response.json();
