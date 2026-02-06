@@ -72,9 +72,9 @@ function VerifyOTP() {
           value={otp}
         />
         <button
-          className={`p-3 mt-3 ${loading ? "bg-green-300" : "bg-green-500 hover:bg-green-400"} text-white rounded-md`}
+          className={`p-3 mt-3 w-[120px] ${loading ? "bg-green-300" : "bg-green-500 hover:bg-green-400"} text-white rounded-md`}
         >
-          Verify OTP
+          {loading ? "Verifying..." : "Verify"}
         </button>
         <p className="text-sm">
           Did not receive OTP?{" "}
