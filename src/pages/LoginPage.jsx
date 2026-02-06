@@ -52,7 +52,7 @@ function LoginPage() {
       if (response.ok) {
         setLoading(false);
         return navigate("/verify-otp", {
-          state: { email: email },
+          state: { email },
         });
       }
 
