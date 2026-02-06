@@ -48,16 +48,17 @@ function LoginPage() {
       });
 
       const data = await response.json();
+      const { message } = data;
 
       if (response.ok) {
+        console.log(message);
         setLoading(false);
-        return navigate("/verify-otp", {
-          state: { email },
-        });
+        sessionStorage.setItem("pendingEmail", email);
+        return navigate("/login/verify-otp");
       }
 
       setLoading(false);
-      return alert(data.message);
+      return alert(message);
     } catch (error) {
       console.error("Error logging in", error);
       alert("Unable to connect to the server");
@@ -70,6 +71,9 @@ function LoginPage() {
         className="flex flex-col w-[400px] max-w-[90%] gap-4"
         onSubmit={handleSubmit}
       >
+        <h1 className="self-center text-xl text-center mb-5 font-bold">
+          LOGIN
+        </h1>
         <input
           className="py-3 px-1 border-2 border-gray-200 rounded-md"
           name="email"
@@ -97,7 +101,7 @@ function LoginPage() {
           <label htmlFor="show-password-toggle">Show password</label>
         </div>
         <button
-          className={`p-3 mt-3 ${loading ? "bg-green-300" : "bg-green-500"} text-white rounded-md`}
+          className={`p-3 mt-3 ${loading ? "bg-green-300" : "bg-green-500 hover:bg-green-400"} text-white rounded-md`}
           tabIndex={0}
           disabled={loading}
         >
