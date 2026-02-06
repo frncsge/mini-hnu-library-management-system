@@ -5,8 +5,8 @@ import generateSecureOTP from "../helpers/generateSecureOTP.helper.js";
 import sendOTPbyEmail from "../helpers/mailer.helper.js";
 import {
   cacheOtp,
-  cacheOtpResendCooldown,
-  trackOtpAttempts,
+  cacheOtpSendCooldown,
+  cachePendingLogin,
   resetOtpAttempts,
 } from "../utils/authCache.util.js";
 
@@ -16,59 +16,46 @@ const login = async (req, res) => {
 
   const email = req.body.email.trim();
   const password = req.body.password.trim();
-  const otpDigit = 6;
-  const emailPattern = /^[^\s@]+@hnu\.edu\.ph$/; //only login email from holy name university
 
   try {
     //check if email fits the email pattern
+    const emailPattern = /^[^\s@]+@hnu\.edu\.ph$/; //only login email from holy name university
     if (!emailPattern.test(email))
       return res
         .status(400)
         .json({ message: "Email must end with @hnu.edu.ph" });
 
+    //then get the user by their email to check if their account exists
     const user = await getUserByEmail(email);
-
     if (!user)
       return res.status(401).json({ message: "Incorrect email or password" });
 
-    //if account found, check the password
+    //if user found, compare the password
     const match = await bcrypt.compare(password, user.hashed_password);
-
     if (!match)
       return res.status(401).json({ message: "Incorrect email or password" });
 
-    //check if otp attempts reached maximum
-    const { blocked, attempts, timeLeft } = await trackOtpAttempts(
-      email,
-      false, //set increment attempt to false
-    );
-
-    if (blocked) {
+    //check for an OTP send cooldown
+    const cooldown = await redisClient.ttl(`otpSendCooldown:${email}`);
+    if (cooldown > 0)
       return res.status(429).json({
-        message: `You have reached the maximum ${attempts} OTP verification attempts. Please try again in ${timeLeft} seconds`,
+        message: `Please wait for ${cooldown} ${cooldown > 1 ? "seconds" : "second"} before requesting a new OTP`,
       });
-    }
 
-    // if password match, check if an OTP is already sent
-    const existingOTP = await redisClient.get(`otp:${email}`);
-    if (existingOTP) {
-      //if an OTP is alredy sent, check for an OTP resend cooldown
-      const cooldown = await redisClient.ttl(`otpResendCooldown:${email}`);
-      if (cooldown > 0)
-        return res.status(429).json({
-          message: `Please wait for ${cooldown} ${cooldown > 1 ? "seconds" : "second"} before requesting a new OTP`,
-        });
-    }
-
-    //send otp via email
+    //if all is good, send otp via email
+    const otpDigit = 6;
     const otp = generateSecureOTP(otpDigit);
     try {
       // await sendOTPbyEmail(email, otp);
 
+      //cache otp in redis
       const value = { sub: user.user_id, role: user.user_role, otp };
       await cacheOtp(email, value);
-      await cacheOtpResendCooldown(email);
-      await resetOtpAttempts(email); //reset otp attempts for every new otp sent
+      await cacheOtpSendCooldown(email);
+      await resetOtpAttempts(email); //reset OTP verification attempts for new issued OTP
+
+      //cache the user's email as pending login so they can request a new OTP without re-entering password
+      await cachePendingLogin(email, value);
     } catch (error) {
       console.error("Error sending OTP via email", error);
       return res

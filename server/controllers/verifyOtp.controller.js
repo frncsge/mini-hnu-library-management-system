@@ -8,6 +8,8 @@ import {
   trackOtpAttempts,
   deleteOtpFromCache,
   resetOtpAttempts,
+  getPendingLogin,
+  deletePendingLogin,
 } from "../utils/authCache.util.js";
 import {
   setAccessTokenCookie,
@@ -17,20 +19,14 @@ import {
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
-  if (!email) return res.status(401).json({ message: "Login is required" });
+  if (!email) return res.status(401).json({ message: "Email is required" });
 
   if (!otp) return res.status(401).json({ message: "OTP is required" });
 
   try {
-    //track otp verification attempt
-    const { blocked, attempts, maxAttempts, timeLeft } =
-      await trackOtpAttempts(email, true); //set increment attempt to true
-
-    if (blocked) {
-      return res.status(429).json({
-        message: `You have reached the maximum ${attempts} OTP verification attempts. Please try again in ${timeLeft} seconds`,
-      });
-    }
+    //check if pending login exists
+    const pending = await getPendingLogin(email);
+    if (!pending) return res.status(401).json({ message: "Login is required" });
 
     //get otp in redis
     const cache = await redisClient.get(`otp:${email}`);
@@ -39,6 +35,20 @@ const verifyOtp = async (req, res) => {
 
     //if invalid otp
     if (otp !== storedOtp) {
+      //track otp verification attempt
+      const { blocked, attempts, maxAttempts, timeLeft } =
+        await trackOtpAttempts(
+          email,
+          true, //increment attempt
+        );
+
+      if (blocked) {
+        await deleteOtpFromCache(email);
+        return res.status(429).json({
+          message: `You have reached the maximum ${attempts} OTP verification attempts. Please request a new OTP to try again`,
+        });
+      }
+
       const remainingAttempts = maxAttempts - attempts;
       return res.status(403).json({
         message: `Invalid OTP. Remaining ${remainingAttempts > 1 ? "attempts" : "attempt"}: ${remainingAttempts}`,
@@ -58,8 +68,9 @@ const verifyOtp = async (req, res) => {
     //delete otp cache and reset attempts
     await deleteOtpFromCache(email);
     await resetOtpAttempts(email);
+    await deletePendingLogin(email);
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json({ message: "Login successful", role });
   } catch (error) {
     console.error("Error verifying OTP", error);
     res.status(500).json({ message: "Server error" });
