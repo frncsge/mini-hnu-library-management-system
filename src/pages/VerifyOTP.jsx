@@ -47,6 +47,27 @@ function VerifyOTP() {
     }
   }
 
+  async function handleResend() {
+    try {
+      const response = await fetch(API_URL + "/login/resend-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      const { message } = data;
+
+      return alert(message);
+    } catch (error) {
+      console.error("Error resending OTP", error);
+      alert("Unable to connect to the server");
+    }
+  }
+
   return (
     <main className="h-screen flex items-center justify-center">
       <form
@@ -78,7 +99,7 @@ function VerifyOTP() {
         </button>
         <p className="text-sm">
           Did not receive OTP?{" "}
-          <span className="underline cursor-pointer text-indigo-500 hover:text-indigo-400">
+          <span className="underline cursor-pointer text-indigo-500 hover:text-indigo-400" onClick={handleResend}>
             Resend
           </span>
         </p>
