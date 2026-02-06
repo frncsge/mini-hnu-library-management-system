@@ -35,12 +35,12 @@ export const cacheRefreshToken = async (refreshToken, value) => {
   }
 };
 
-export const cacheOtpResendCooldown = async (email) => {
-  const key = `otpResendCooldown:${email}`;
+export const cacheOtpSendCooldown = async (email) => {
+  const key = `otpSendCooldown:${email}`;
   const ttl = 60; //60 seconds cooldown
 
   try {
-    await redisClient.setEx(key, ttl, "OTP resend cooldown");
+    await redisClient.setEx(key, ttl, "OTP send cooldown");
   } catch (error) {
     console.error("Error caching OTP resend cooldown:", error);
     throw error;
@@ -50,7 +50,7 @@ export const cacheOtpResendCooldown = async (email) => {
 export const trackOtpAttempts = async (email, incr) => {
   const key = `otpAttempts:${email}`;
   const maxAttempts = 5;
-  const ttl = 3 * 60; //5 minutes before user get to verify OTP again
+  const ttl = 3 * 60; //3 minutes before user get to verify OTP again
 
   try {
     //get current attempts
@@ -83,6 +83,41 @@ export const resetOtpAttempts = async (email) => {
     await redisClient.del(key);
   } catch (error) {
     console.error("Error resetting OTP attempts:", error);
+    throw error;
+  }
+};
+
+export const cachePendingLogin = async (email, user) => {
+  const key = `pendingLogin:${email}`;
+  const ttl = 300; //300 seconds or 5 minutes
+
+  try {
+    await redisClient.setEx(key, ttl, JSON.stringify(user));
+  } catch (error) {
+    console.error("Error caching pending login:", error);
+    throw error;
+  }
+};
+
+export const getPendingLogin = async (email) => {
+  const key = `pendingLogin:${email}`;
+
+  try {
+    const pending = await redisClient.get(key);
+    return pending;
+  } catch (error) {
+    console.error("Error getting pending login:", error);
+    throw error;
+  }
+};
+
+export const deletePendingLogin = async (email) => {
+  const key = `pendingLogin:${email}`;
+
+  try {
+    await redisClient.del(key);
+  } catch (error) {
+    console.error("Error getting pending login:", error);
     throw error;
   }
 };
