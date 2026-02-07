@@ -15,3 +15,23 @@ export const checkLoggedIn = (req, res, next) => {
     next();
   }
 };
+
+export const authenticateUser = (req, res, next) => {
+  const { accessToken } = req.cookies;
+  const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+
+  if (!accessToken)
+    return res.status(401).json({ message: "Not authenticated" });
+
+  try {
+    const decoded = jwt.verify(accessToken, accessTokenSecret);
+
+    //create user object key
+    const { sub, role } = decoded;
+    req.user = { id: sub, role };
+
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid access token" });
+  }
+};
