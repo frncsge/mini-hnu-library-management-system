@@ -18,3 +18,17 @@ export const setRefreshTokenCookie = (res, refreshToken) => {
     maxAge: ttl,
   });
 };
+
+export const clearJwtCookies = (res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
+};
