@@ -30,7 +30,7 @@ const verifyOtp = async (req, res) => {
 
     //get otp in redis
     const cache = await redisClient.get(`otp:${email}`);
-    if (!cache) return res.status(403).json({ message: "OTP expired" });
+    if (!cache) return res.status(403).json({ message: "Invalid OTP. Please request a new OTP and try again" });
     const { sub, role, otp: storedOtp } = JSON.parse(cache);
 
     //if invalid otp
@@ -45,7 +45,7 @@ const verifyOtp = async (req, res) => {
       if (blocked) {
         await deleteOtpFromCache(email);
         return res.status(429).json({
-          message: `You have reached the maximum ${attempts} OTP verification attempts. Please request a new OTP to try again`,
+          message: `You have reached the maximum ${attempts} OTP verification attempts. Please request a new OTP and try again`,
         });
       }
 
