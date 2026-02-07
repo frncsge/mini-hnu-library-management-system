@@ -35,3 +35,12 @@ export const authenticateUser = (req, res, next) => {
     return res.status(401).json({ message: "Invalid access token" });
   }
 };
+
+export const authenticateRole = (...requiredRoles) => {
+  return (req, res, next) => {
+    if (!requiredRoles.includes(req.user.role))
+      return res.status(403).json({ message: "Forbidden" });
+
+    next();
+  };
+};
