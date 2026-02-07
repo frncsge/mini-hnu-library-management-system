@@ -1,7 +1,9 @@
 import express from "express";
-import authRoutes from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import authRoutes from "./routes/auth.routes.js";
+import bookRoutes from "./routes/book.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 const PORT = 3000;
@@ -16,8 +18,10 @@ app.use(
   }),
 );
 
-//auth routes
+//routes
 app.use(authRoutes);
+app.use(userRoutes)
+app.use(bookRoutes);
 
 app.listen(PORT, () => {
   console.log("Listening on port", PORT);
