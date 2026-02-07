@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import LoginPage from "./pages/LoginPage.jsx";
-import VerifyOTP from "./pages/VerifyOTP.jsx";
+import VerifyOtpPage from "./pages/VerifyOtpPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LibrarianDashboard from "./pages/LibrarianDashboard.jsx";
 import StudentHomePage from "./pages/StudentHomePage.jsx";
@@ -18,7 +18,7 @@ function App() {
     },
     {
       path: "/login/verify-otp",
-      element: <VerifyOTP />,
+      element: <VerifyOtpPage />,
     },
     {
       path: "/admin/dashboard",
@@ -38,7 +38,3 @@ function App() {
 }
 
 export default App;
-
-//to do:
-// / route should be a page where users can select to log in as admin, librarian, student
-//or maybe just a regular log in page and then just check the role of the log ins
