@@ -18,6 +18,7 @@ export const getAdminProfile = async (id) => {
       `
         SELECT 
 	        u.user_id,
+          u.user_role,
 	        u.email,
 	        ad.admin_id,
 	        ad.admin_username,
@@ -40,6 +41,7 @@ export const getLibrarianProfile = async (id) => {
       `
         SELECT 
 	        u.user_id,
+          u.user_role,
 	        u.email,
 	        lib.librarian_id,
 	        lib.first_name,
@@ -63,6 +65,7 @@ export const getStudentProfile = async (id) => {
       `
         SELECT 
 	        u.user_id,
+          u.user_role,
 	        u.email,
 	        st.student_id,
 	        st.student_school_id,
