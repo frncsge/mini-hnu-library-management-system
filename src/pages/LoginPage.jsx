@@ -52,16 +52,6 @@ function LoginPage() {
       const { message, role } = data;
 
       if (response.ok) {
-        //if role exists, means user is already logged in
-        if (role) {
-          if (role === "admin")
-            return navigate("/admin/dashboard", { replace: true });
-          if (role === "librarian")
-            return navigate("/librarian/dashboard", { replace: true });
-          if (role === "student")
-            return navigate("/student/homepage", { replace: true });
-        }
-
         console.log(message);
         setLoading(false);
         sessionStorage.setItem("pendingEmail", email);
