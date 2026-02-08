@@ -71,3 +71,19 @@ export const getBorrowsByStudentId = async (id) => {
     throw error;
   }
 };
+
+export const getBookSummary = async () => {
+  try {
+    const result = await pool.query(`
+        SELECT
+          COUNT(*) AS total_books,
+          SUM(CASE WHEN bc.status = 'available' THEN 1 ELSE 0 END) AS available_copies,
+	        SUM(CASE WHEN bc.status = 'rented' THEN 1 ELSE 0 END) AS borrowed_copies
+        FROM book_copy bc;
+      `);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error getting book summary:", error);
+    throw error;
+  }
+};
