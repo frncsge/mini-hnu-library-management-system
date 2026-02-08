@@ -21,7 +21,7 @@ export const authenticateUser = (req, res, next) => {
   const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
   if (!accessToken)
-    return res.status(401).json({ message: "Not authenticated" });
+    return res.status(401).json({ message: "Login required" });
 
   try {
     const decoded = jwt.verify(accessToken, accessTokenSecret);
