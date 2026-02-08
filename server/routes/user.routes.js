@@ -7,9 +7,9 @@ import { getMyProfile, getBorrows } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
-router.get("/me", authenticateUser, getMyProfile);
+router.get("/api/me", authenticateUser, getMyProfile);
 router.get(
-  "/me/borrows",
+  "/api/me/borrows",
   authenticateUser,
   authenticateRole("student"),
   getBorrows,

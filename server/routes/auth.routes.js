@@ -7,9 +7,9 @@ import getNewAccessToken from "../controllers/refresh.controller.js";
 
 const router = express.Router();
 
-router.post("/login", checkLoggedIn, login);
-router.post("/login/verify-otp", verifyOtp);
-router.post("/login/resend-otp", checkLoggedIn, resendOtp);
-router.post("/refresh", getNewAccessToken);
+router.post("/api/login", checkLoggedIn, login);
+router.post("/api/login/verify-otp", verifyOtp);
+router.post("/api/login/resend-otp", checkLoggedIn, resendOtp);
+router.post("/api/refresh", getNewAccessToken);
 
 export default router;
