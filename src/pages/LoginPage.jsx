@@ -36,7 +36,7 @@ function LoginPage() {
       const email = input.email.trim();
       const password = input.password.trim();
 
-      const response = await fetch(API_URL + "/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,9 +49,19 @@ function LoginPage() {
       });
 
       const data = await response.json();
-      const { message } = data;
+      const { message, role } = data;
 
       if (response.ok) {
+        //if role exists, means user is already logged in
+        if (role) {
+          if (role === "admin")
+            return navigate("/admin/dashboard", { replace: true });
+          if (role === "librarian")
+            return navigate("/librarian/dashboard", { replace: true });
+          if (role === "student")
+            return navigate("/student/homepage", { replace: true });
+        }
+
         console.log(message);
         setLoading(false);
         sessionStorage.setItem("pendingEmail", email);
@@ -61,6 +71,7 @@ function LoginPage() {
       setLoading(false);
       return alert(message);
     } catch (error) {
+      setLoading(false);
       console.error("Error logging in", error);
       alert("Unable to connect to the server");
     }
@@ -82,6 +93,7 @@ function LoginPage() {
           placeholder="Email"
           value={input.email}
           onChange={handleInput}
+          required
         />
         <input
           className="py-3 px-1 border-2 border-gray-200 rounded-md"
@@ -90,6 +102,7 @@ function LoginPage() {
           placeholder="Password"
           value={input.password}
           onChange={handleInput}
+          required
         />
         <div className="self-end">
           <input
