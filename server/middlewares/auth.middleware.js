@@ -9,7 +9,7 @@ export const checkLoggedIn = (req, res, next) => {
   try {
     const decoded = jwt.verify(accessToken, accessTokenSecret);
     //if token is valid, user is already logged in
-    return res.status(200).json({ message: "You are already logged in" });
+    return res.status(200).json({ message: "You are already logged in", role: decoded.role });
   } catch (error) {
     //if access token is invalid, proceed with login
     next();
