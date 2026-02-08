@@ -20,7 +20,7 @@ function VerifyOTP() {
     setLoading(true);
 
     try {
-      const response = await fetch(API_URL + "/login/verify-otp", {
+      const response = await fetch("/api/login/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ function VerifyOTP() {
     setResending(true);
 
     try {
-      const response = await fetch(API_URL + "/login/resend-otp", {
+      const response = await fetch("/api/login/resend-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
