@@ -2,8 +2,8 @@ export const setAccessTokenCookie = (res, accessToken) => {
   const ttl = 10 * 60 * 1000; //10 mins
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
     maxAge: ttl,
   });
 };
@@ -13,8 +13,8 @@ export const setRefreshTokenCookie = (res, refreshToken) => {
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
     maxAge: ttl,
   });
 };
@@ -22,13 +22,13 @@ export const setRefreshTokenCookie = (res, refreshToken) => {
 export const clearJwtCookies = (res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
   });
 };
