@@ -13,7 +13,7 @@ import { clearJwtCookies } from "../utils/authCookies.util.js";
 const getNewAccessToken = async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken)
-    return res.status(401).json({ message: "No access token provided" });
+    return res.status(401).json({ message: "Login required" });
 
   try {
     const cachedRefreshToken = await redisClient.get(
@@ -33,7 +33,7 @@ const getNewAccessToken = async (req, res) => {
     const user = { sub, role };
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
-    await cacheRefreshToken(`refreshToken:${newRefreshToken}`, user);
+    await cacheRefreshToken(newRefreshToken, user);
 
     //store jwt tokens in httpOnly cookie
     setAccessTokenCookie(res, newAccessToken);
