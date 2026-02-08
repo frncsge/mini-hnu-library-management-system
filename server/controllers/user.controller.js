@@ -27,6 +27,8 @@ export const getMyProfile = async (req, res) => {
       return res.status(400).json({ message: "Invalid user role" });
     }
 
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
     //cache fetched profile
     await redisClient.setEx(`myProfile:${id}`, 300, JSON.stringify(profile));
 
