@@ -4,6 +4,7 @@ import {
   getBookById,
   searchBookByTitle,
   searchBookByIsbn,
+  getBookSummary,
 } from "../models/book.model.js";
 
 export const getBooks = async (req, res) => {
@@ -82,6 +83,35 @@ export const searchBook = async (req, res) => {
     res.status(200).json({ books });
   } catch (error) {
     console.error("Error searching book", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getBookDashboardSummary = async (req, res) => {
+  try {
+    const cachedBookDashboardSummary = await redisClient.get(
+      `books:dashboardSummary`,
+    );
+    if (cachedBookDashboardSummary)
+      return res
+        .status(200)
+        .json({ bookDashboardSummary: JSON.parse(cachedBookDashboardSummary) });
+
+    const bookDashboardSummary = await getBookSummary();
+    if (!bookDashboardSummary)
+      return res
+        .status(404)
+        .json({ message: "Could not get dashboard information" });
+
+    await redisClient.setEx(
+      `books:dashboardSummary`,
+      300,
+      JSON.stringify(bookDashboardSummary),
+    );
+
+    res.status(200).json({ bookDashboardSummary });
+  } catch (error) {
+    console.error("Error getting book dashboard summary", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
