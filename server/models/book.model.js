@@ -50,7 +50,15 @@ export const getBorrowsByStudentId = async (id) => {
   try {
     const result = await pool.query(
       `
-      SELECT * FROM borrow br
+      SELECT 
+	      br.borrow_id,
+	      u.user_id,
+	      br.student_id,
+	      br.copy_id,
+	      br.due_date,
+	      br.borrow_date,
+	      br.return_date
+      FROM borrow br
       JOIN student st ON br.student_id = st.student_id
       JOIN users u ON st.user_id = u.user_id
       WHERE u.user_id = $1;
