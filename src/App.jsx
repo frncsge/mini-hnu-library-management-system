@@ -5,6 +5,7 @@ import VerifyOtpPage from "./pages/VerifyOtpPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LibrarianDashboard from "./pages/LibrarianDashboard.jsx";
 import StudentHomePage from "./pages/StudentHomePage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,11 +27,19 @@ function App() {
     },
     {
       path: "/librarian/dashboard",
-      element: <LibrarianDashboard />,
+      element: (
+        <ProtectedRoute allowedRoles={["librarian"]}>
+          <LibrarianDashboard />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/student/homepage",
-      element: <StudentHomePage />,
+      element: (
+        <ProtectedRoute allowedRoles={["student"]}>
+          <StudentHomePage />
+        </ProtectedRoute>
+      ),
     },
   ]);
 
