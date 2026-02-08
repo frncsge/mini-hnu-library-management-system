@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 
 function StudentHomePage() {
   const API_URL = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
   const [profile, setProfile] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,10 +50,12 @@ function StudentHomePage() {
         }
 
         setLoading(false);
+        setMessage(data.message);
         alert(data.message);
         return;
       } catch (error) {
         setLoading(false);
+        setMessage(data.message);
         console.error("Error fetching user profile", error);
         alert("Unable to connect to the server");
       }
@@ -60,7 +64,27 @@ function StudentHomePage() {
     fetchProfile();
   }, []);
 
-  if (loading || !profile) return <div>Loading Student Home Page...</div>;
+  async function handleLogout() {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        return alert(data.message || "Logout failed");
+      }
+
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Error logging out", error);
+      alert("Unable to connect to the server");
+    }
+  }
+
+  if (loading) return <div>Loading...</div>;
+  if (!loading && !profile) return <div>{message}</div>;
 
   return (
     <>
@@ -75,8 +99,19 @@ function StudentHomePage() {
             <li className="cursor-pointer">Borrowed</li>
           </ul>
         </section>
-        <section className="text-white cursor-pointer">
-          {`${profile.first_name} ${profile.last_name}`}
+        <section className="relative text-white">
+          <p
+            className="select-none cursor-pointer"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >{`${profile.first_name} ${profile.last_name}`}</p>
+          {menuOpen && (
+            <div
+              className="absolute w-full border border-gray-300 bg-white p-2 cursor-pointer"
+              onClick={handleLogout}
+            >
+              <span className="text-black">Logout</span>
+            </div>
+          )}
         </section>
       </nav>
       <main className="px-4 pt-6">
