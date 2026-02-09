@@ -1,11 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 function ProtectedRoute({ allowedRoles, children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchRefresh() {
@@ -39,7 +40,7 @@ function ProtectedRoute({ allowedRoles, children }) {
           const refresh = await fetchRefresh();
           if (refresh.isRefreshed) return fetchProfile();
 
-          //   setError(refresh.message || "Failed to load profile data");
+          setError(refresh.message || "Failed to load profile data");
         }
       } catch (error) {
         setError("Unable to connect to server");
@@ -55,8 +56,14 @@ function ProtectedRoute({ allowedRoles, children }) {
   if (loading) return <div>Loading...</div>;
   if (error)
     return (
-      <div className="h-screen flex items-center justify-center text-red-500">
-        {error}
+      <div className="h-screen flex flex-col gap-6 items-center justify-center">
+        <p className="text-black text-2xl font-medium">{error}</p>
+        <button
+          className="bg-green-500 p-2 text-white rounded-md"
+          onClick={() => navigate(-1)}
+        >
+          Go back
+        </button>
       </div>
     );
   if (!allowedRoles.includes(profile.user_role))
@@ -64,6 +71,12 @@ function ProtectedRoute({ allowedRoles, children }) {
       <div className="h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="font-bold text-2xl">Forbidden</h1>
         <p className="text-sm">You are not authorized to access this page</p>
+        <button
+          className="bg-green-500 p-2 text-white rounded-md mt-5"
+          onClick={() => navigate(-1)}
+        >
+          Go back
+        </button>
       </div>
     );
   if (!profile) return <Navigate to="/login" replace />;
