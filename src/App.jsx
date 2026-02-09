@@ -40,13 +40,21 @@ function App() {
       ),
     },
     {
-      path: "/student/homepage",
+      path: "/student/home",
       element: (
         <ProtectedRoute allowedRoles={["student"]}>
           <StudentHomePage />
         </ProtectedRoute>
       ),
     },
+    {
+      path: "/books",
+      element: <div>Books</div>,
+    }, 
+    {
+      path: "/student/borrowed",
+      element: <div>Borrowed books</div>
+    }
   ]);
 
   return <RouterProvider router={router} />;
