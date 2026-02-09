@@ -46,7 +46,7 @@ const login = async (req, res) => {
     const otpDigit = 6;
     const otp = generateSecureOTP(otpDigit);
     try {
-      // await sendOTPbyEmail(email, otp);
+      await sendOTPbyEmail(email, otp);
 
       //cache otp in redis
       const value = { sub: user.user_id, role: user.user_role, otp };

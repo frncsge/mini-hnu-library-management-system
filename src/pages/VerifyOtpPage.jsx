@@ -38,7 +38,7 @@ function VerifyOTP() {
           return navigate("/librarian/dashboard", { replace: true });
 
         if (role === "student")
-          return navigate("/student/homepage", { replace: true });
+          return navigate("/student/home", { replace: true });
       }
 
       setLoading(false);
@@ -86,7 +86,7 @@ function VerifyOTP() {
         </h1>
         <p className="text-sm text-center">
           We have sent your OTP to <br />{" "}
-          <b className="text-green-500">amoncio.francis_ge@hnu.edu.ph</b>
+          <b className="text-green-500">{email}</b>
         </p>
         <input
           className="py-3 px-1 border-2 border-gray-200 rounded-md text-center"

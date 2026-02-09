@@ -45,7 +45,7 @@ function NavigationBar({ profile }) {
         <ul className="flex gap-5 text-white">
           {navItems.map((item) => {
             return (
-              <li className="cursor-pointer">
+              <li key={item.path} className="cursor-pointer">
                 <Link to={`${item.path}`}>{item.name}</Link>
               </li>
             );
