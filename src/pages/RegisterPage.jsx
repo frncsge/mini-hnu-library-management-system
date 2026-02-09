@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-function LoginPage() {
+function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    schoolId: "",
   });
-  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -25,29 +28,34 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const email = input.email.trim();
-      const password = input.password.trim();
-
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
-          password,
+          email: input.email,
+          password: input.password,
+          confirmPassword: input.confirmPassword,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          studentSchoolId: input.schoolId,
         }),
-        credentials: "include",
       });
-
       const data = await response.json();
       const { message, role } = data;
 
       if (response.ok) {
-        console.log(message);
         setLoading(false);
-        sessionStorage.setItem("pendingEmail", email);
-        return navigate("/login/verify-otp");
+
+        if (role === "admin")
+          return navigate("/admin/dashboard", { replace: true });
+
+        if (role === "librarian")
+          return navigate("/librarian/dashboard", { replace: true });
+
+        if (role === "student")
+          return navigate("/student/homepage", { replace: true });
       }
 
       setLoading(false);
@@ -66,8 +74,35 @@ function LoginPage() {
         onSubmit={handleSubmit}
       >
         <h1 className="self-center text-xl text-center mb-5 font-bold">
-          LOGIN
+          STUDENT ACCOUNT REGISTRATION
         </h1>
+        <input
+          className="py-3 px-1 border-2 border-gray-200 rounded-md"
+          name="firstName"
+          type="text"
+          placeholder="First Name"
+          value={input.firstName}
+          onChange={handleInput}
+          required
+        />
+        <input
+          className="py-3 px-1 border-2 border-gray-200 rounded-md"
+          name="lastName"
+          type="text"
+          placeholder="Last Name"
+          value={input.lastName}
+          onChange={handleInput}
+          required
+        />
+        <input
+          className="py-3 px-1 border-2 border-gray-200 rounded-md"
+          name="schoolId"
+          type="text"
+          placeholder="School ID"
+          value={input.schoolId}
+          onChange={handleInput}
+          required
+        />
         <input
           className="py-3 px-1 border-2 border-gray-200 rounded-md"
           name="email"
@@ -86,6 +121,15 @@ function LoginPage() {
           onChange={handleInput}
           required
         />
+        <input
+          className="py-3 px-1 border-2 border-gray-200 rounded-md"
+          name="confirmPassword"
+          type={showPassword ? "text" : "password"}
+          placeholder="Confirm Password"
+          value={input.confirmPassword}
+          onChange={handleInput}
+          required
+        />
         <div className="self-end">
           <input
             className="mr-1"
@@ -101,11 +145,11 @@ function LoginPage() {
           tabIndex={0}
           disabled={loading}
         >
-          {loading ? "Loading..." : "Login"}
+          {loading ? "Loading..." : "Register"}
         </button>
       </form>
     </main>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;

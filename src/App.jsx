@@ -6,12 +6,14 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LibrarianDashboard from "./pages/LibrarianDashboard.jsx";
 import StudentHomePage from "./pages/StudentHomePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
+import DefaultPage from "./pages/DefaultPage.jsx";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <div>Default Page temporary</div>,
+      element: <DefaultPage />,
     },
     {
       path: "/login",
@@ -20,6 +22,10 @@ function App() {
     {
       path: "/login/verify-otp",
       element: <VerifyOtpPage />,
+    },
+    {
+      path: "/register",
+      element: <RegisterPage />,
     },
     {
       path: "/admin/dashboard",
