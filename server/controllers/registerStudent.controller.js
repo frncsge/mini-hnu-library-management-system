@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import {
   storeNewStudent,
-  getUserByEmail,
-  getStudentBySchoolId,
+  getUserByEmail, 
 } from "../models/user.model.js";
 import {
   generateAccessToken,
@@ -21,24 +20,18 @@ const register = async (req, res) => {
     confirmPassword: rawConfirmPassword,
     firstName: rawFirstName,
     lastName: rawLastName,
-    studentSchoolId: rawStudentSchoolId,
   } = req.body;
   const email = rawEmail?.trim();
   const password = rawPassword?.trim();
   const confirmPassword = rawConfirmPassword?.trim();
   const firstName = rawFirstName?.trim();
   const lastName = rawLastName?.trim();
-  const studentSchoolId = rawStudentSchoolId?.trim();
 
   //validate email
   if (!email) return res.status(400).json({ message: "Email is required" });
   const emailPattern = /^[^\s@]+@hnu\.edu\.ph$/; //only login email from holy name university
   if (!emailPattern.test(email))
     return res.status(400).json({ message: "Email must end with @hnu.edu.ph" });
-
-  //check if email is already used
-  const user = await getUserByEmail(email);
-  if (user) return res.status(400).json({ message: "Email is already in use" });
 
   //validate password
   if (!password || !confirmPassword)
@@ -51,25 +44,18 @@ const register = async (req, res) => {
   if (password !== confirmPassword)
     return res.status(400).json({ message: "Passwords do not match" });
 
-  //validate name and id
+  //validate name
   const namePattern = /^[A-Za-z]+([ '-][A-Za-z]+)*$/;
   if (!firstName || !namePattern.test(firstName))
     return res.status(400).json({ message: "Invalid first name" });
   if (!lastName || !namePattern.test(lastName))
     return res.status(400).json({ message: "Invalid last name" });
 
-  //validate school id
-  const numericStudentSchoolId = Number(studentSchoolId);
-  if (isNaN(numericStudentSchoolId))
-    return res.status(400).json({ message: "Invalid school id" });
-
   try {
-    //check if school id is already registered
-    const registered = await getStudentBySchoolId(numericStudentSchoolId);
-    if (registered)
-      return res
-        .status(400)
-        .json({ message: "School ID is already registered" });
+    //check if email is already used
+    const user = await getUserByEmail(email);
+    if (user)
+      return res.status(400).json({ message: "Email is already in use" });
 
     //hash password
     const saltRounds = 10;
@@ -81,7 +67,6 @@ const register = async (req, res) => {
       hashedPassword,
       firstName,
       lastName,
-      studentSchoolId: numericStudentSchoolId,
     };
     const newUser = await storeNewStudent(newStudentAccount);
 

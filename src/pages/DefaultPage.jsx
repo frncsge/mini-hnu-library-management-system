@@ -13,7 +13,7 @@ function DefaultPage() {
       </button>
       <button
         className="w-[225px] p-2 bg-green-500 rounded-md text-white"
-        onClick={() => navigate("/register")}
+        onClick={() => navigate("/student/register")}
       >
         Register Student Account
       </button>

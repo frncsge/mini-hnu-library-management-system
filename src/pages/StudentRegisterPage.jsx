@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
-function RegisterPage() {
+function StudentRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     email: "",
@@ -9,7 +9,6 @@ function RegisterPage() {
     confirmPassword: "",
     firstName: "",
     lastName: "",
-    schoolId: "",
   });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -39,7 +38,6 @@ function RegisterPage() {
           confirmPassword: input.confirmPassword,
           firstName: input.firstName,
           lastName: input.lastName,
-          studentSchoolId: input.schoolId,
         }),
       });
       const data = await response.json();
@@ -96,15 +94,6 @@ function RegisterPage() {
         />
         <input
           className="py-3 px-1 border-2 border-gray-200 rounded-md"
-          name="schoolId"
-          type="text"
-          placeholder="School ID"
-          value={input.schoolId}
-          onChange={handleInput}
-          required
-        />
-        <input
-          className="py-3 px-1 border-2 border-gray-200 rounded-md"
           name="email"
           type="text"
           placeholder="Email"
@@ -152,4 +141,4 @@ function RegisterPage() {
   );
 }
 
-export default RegisterPage;
+export default StudentRegisterPage;

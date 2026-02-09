@@ -117,7 +117,7 @@ function LibrarianDashboard({ profile }) {
             <span className="text-white text-2xl font-bold">?</span>
           </div>
           <div>
-            <h2 className="font-bold text-lg">{`${profile.first_name} ${profile.last_name}`}</h2>
+            <h2 className="font-bold text-lg">{`${profile.first_name} ${profile.last_name} [${profile.user_role}]`}</h2>
             <p className="text-sm">{profile.email}</p>
           </div>
         </section>

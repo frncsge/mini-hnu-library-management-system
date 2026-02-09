@@ -12,25 +12,11 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const getStudentBySchoolId = async (studentSchoolId) => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM student WHERE student_school_id = $1",
-      [studentSchoolId],
-    );
-    return result.rows[0];
-  } catch (error) {
-    console.error("Error getting student by school id:", error);
-    throw error;
-  }
-};
-
 export const storeNewStudent = async ({
   email,
   hashedPassword,
   firstName,
   lastName,
-  studentSchoolId,
 }) => {
   const role = "student";
   const client = await pool.connect();
@@ -45,8 +31,8 @@ export const storeNewStudent = async ({
     const newUser = { sub: result.rows[0].user_id, role };
 
     await client.query(
-      "INSERT INTO student (user_id, student_school_id, first_name, last_name) VALUES ($1, $2, $3, $4)",
-      [newUser.sub, studentSchoolId, firstName, lastName],
+      "INSERT INTO student (user_id, first_name, last_name) VALUES ($1, $2, $3)",
+      [newUser.sub, firstName, lastName],
     );
 
     await client.query("COMMIT");
@@ -117,7 +103,6 @@ export const getStudentProfile = async (id) => {
           u.user_role,
 	        u.email,
 	        st.student_id,
-	        st.student_school_id,
 	        st.first_name,
 	        st.last_name
         FROM users u

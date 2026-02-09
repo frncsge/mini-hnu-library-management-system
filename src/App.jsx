@@ -6,7 +6,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LibrarianDashboard from "./pages/LibrarianDashboard.jsx";
 import StudentHomePage from "./pages/StudentHomePage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import RegisterPage from "./pages/RegisterPage.jsx";
+import StudentRegisterPage from "./pages/StudentRegisterPage.jsx";
 import DefaultPage from "./pages/DefaultPage.jsx";
 
 function App() {
@@ -24,8 +24,8 @@ function App() {
       element: <VerifyOtpPage />,
     },
     {
-      path: "/register",
-      element: <RegisterPage />,
+      path: "/student/register",
+      element: <StudentRegisterPage />,
     },
     {
       path: "/admin/dashboard",
