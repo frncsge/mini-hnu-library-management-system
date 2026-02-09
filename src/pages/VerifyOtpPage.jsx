@@ -7,7 +7,6 @@ function VerifyOTP() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!email) {
@@ -34,9 +33,6 @@ function VerifyOTP() {
       if (response.ok) {
         setLoading(false);
         sessionStorage.removeItem("pendingEmail");
-        
-        if (role === "admin")
-          return navigate("/admin/dashboard", { replace: true });
 
         if (role === "librarian")
           return navigate("/librarian/dashboard", { replace: true });
@@ -114,7 +110,7 @@ function VerifyOTP() {
             className="underline cursor-pointer text-indigo-500 hover:text-indigo-400"
             onClick={handleResend}
           >
-            Resend
+            {resending ? "Resending..." : "Resend"}
           </span>
         </p>
       </form>
