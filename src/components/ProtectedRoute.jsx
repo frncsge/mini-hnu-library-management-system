@@ -66,7 +66,7 @@ function ProtectedRoute({ allowedRoles, children }) {
         </button>
       </div>
     );
-  if (!allowedRoles.includes(profile.user_role))
+  if (allowedRoles && !allowedRoles.includes(profile.user_role))
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-4">
         <h1 className="font-bold text-2xl">Forbidden</h1>
