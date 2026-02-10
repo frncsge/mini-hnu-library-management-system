@@ -53,7 +53,7 @@ function StudentRegisterPage() {
           return navigate("/librarian/dashboard", { replace: true });
 
         if (role === "student")
-          return navigate("/student/homepage", { replace: true });
+          return navigate("/student/home", { replace: true });
       }
 
       setLoading(false);
