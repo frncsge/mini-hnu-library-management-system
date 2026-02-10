@@ -63,7 +63,7 @@ const login = async (req, res) => {
         .json({ message: "Failed to send OTP. Please try logging in again" });
     }
 
-    res.status(200).json({ message: `OTP sent ${otp}` });
+    res.status(200).json({ message: `OTP sent` });
   } catch (error) {
     console.error("Error logging in", error);
     res.status(500).json({ message: "Server error" });
